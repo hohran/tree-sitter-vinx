@@ -1,0 +1,42 @@
+{
+  "$schema": "https://tree-sitter.github.io/tree-sitter/assets/schemas/config.schema.json",
+  "grammars": [
+    {
+      "name": "vinx",
+      "camelcase": "Vinx",
+      "title": "Vinx",
+      "scope": "source.vinx",
+      "file-types": [
+        "vinx"
+      ],
+      "injection-regex": "^vinx$",
+      "class-name": "TreeSitterVinx",
+      "highlights": [ "queries/highlights.scm" ]
+    }
+  ],
+  "metadata": {
+    "version": "0.1.0",
+    "license": "MIT",
+    "description": "language for image/video processing specification",
+    "authors": [
+      {
+        "name": "jan hranicka",
+        "email": "hranickajan@seznam.cz"
+      }
+    ],
+    "links": {
+      "repository": "https://github.com/tree-sitter/tree-sitter-vinx"
+    }
+  },
+  "bindings": {
+    "c": true,
+    "go": true,
+    "node": true,
+    "python": true,
+    "rust": true,
+    "swift": true,
+    "zig": false
+  },
+  "theme": {
+  }
+}

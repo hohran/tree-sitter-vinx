@@ -1,0 +1,23 @@
+@test1214
+every 2 seconds {
+    read 1 pixel from (2,50);
+    move $p1 left by 1;
+}
+
+new operation = {
+    this is my component;
+    helooo;
+}
+
+new component = {
+    @inside_action
+    every 1 frame {
+        do something;
+    }
+
+    nested operation = {
+        deactivate @inside_action;
+    }
+}
+
+$p1 = new (1,1);
