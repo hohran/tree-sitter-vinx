@@ -74,19 +74,17 @@
     "named": true,
     "fields": {
       "component": {
-        "multiple": false,
+        "multiple": true,
         "required": false,
         "types": [
           {
+            "type": "=",
+            "named": false
+          },
+          {
             "type": "component_declaration",
             "named": true
-          }
-        ]
-      },
-      "lhs": {
-        "multiple": false,
-        "required": true,
-        "types": [
+          },
           {
             "type": "sequence",
             "named": true
@@ -94,11 +92,19 @@
         ]
       },
       "operation": {
-        "multiple": false,
+        "multiple": true,
         "required": false,
         "types": [
           {
-            "type": "events",
+            "type": "=",
+            "named": false
+          },
+          {
+            "type": "operation_declaration",
+            "named": true
+          },
+          {
+            "type": "operation_signature",
             "named": true
           }
         ]
@@ -107,6 +113,11 @@
   },
   {
     "type": "direction",
+    "named": true,
+    "fields": {}
+  },
+  {
+    "type": "effect",
     "named": true,
     "fields": {}
   },
@@ -120,6 +131,63 @@
       "types": [
         {
           "type": "sequence",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "iterator",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "variable",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "operation_declaration",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "sequence",
+          "named": true
+        },
+        {
+          "type": "var_definition",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "operation_signature",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "iterator",
+          "named": true
+        },
+        {
+          "type": "keyword",
+          "named": true
+        },
+        {
+          "type": "variable",
           "named": true
         }
       ]
@@ -309,6 +377,10 @@
           "named": true
         },
         {
+          "type": "effect",
+          "named": true
+        },
+        {
           "type": "number",
           "named": true
         },
@@ -362,11 +434,19 @@
     }
   },
   {
+    "type": "!",
+    "named": false
+  },
+  {
     "type": "(",
     "named": false
   },
   {
     "type": ")",
+    "named": false
+  },
+  {
+    "type": "*",
     "named": false
   },
   {
@@ -402,12 +482,21 @@
     "named": false
   },
   {
+    "type": "blurred",
+    "named": false
+  },
+  {
     "type": "brown",
     "named": false
   },
   {
     "type": "color_value",
     "named": true
+  },
+  {
+    "type": "comment",
+    "named": true,
+    "extra": true
   },
   {
     "type": "cyan",
@@ -431,6 +520,10 @@
   },
   {
     "type": "green",
+    "named": false
+  },
+  {
+    "type": "inversed",
     "named": false
   },
   {
@@ -471,6 +564,10 @@
   },
   {
     "type": "purple",
+    "named": false
+  },
+  {
+    "type": "randomized",
     "named": false
   },
   {

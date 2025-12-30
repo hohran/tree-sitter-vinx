@@ -2,3 +2,4 @@
 (label) @comment
 (value) @keyword
 (variable) @type
+(comment) @comment

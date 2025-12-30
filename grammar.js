@@ -10,19 +10,34 @@
 module.exports = grammar({
   name: "vinx",
 
+  extras: ($) => [
+    /\s/, // whitespace
+    $.comment,
+  ],
+
   conflicts: $ => [
-    [$.var_definition,$.value],
+    [$.var_definition,$.value,$.operation_signature],
+    [$.iterator,$.value],
+    [$.operation_signature,$.value],
+    [$.operation_signature,$.sequence],
   ],
 
   word: $ => $.keyword,
 
   rules: {
     source_file: $ => repeat($._stmt),
-    _stmt: $ => choice(
+    _stmt: $ => prec(1, choice(
       $.action,
       $.var_definition,
       $.declaration,
       // $.component_definition,
+    )),
+    _op_stmt: $ => prec(2,choice(
+      $.var_definition,
+      seq(
+        $.sequence,
+        ';',
+      )),
     ),
     action: $ => seq(
       optional($.label),
@@ -36,20 +51,53 @@ module.exports = grammar({
       ';',
     ),
     declaration: $ => seq(
-      field("lhs", $.sequence),
-      '=',
       choice(
-        field("operation", $.events),
-        field("component", $.component_declaration),
+        prec(1,field("operation", seq(
+          $.operation_signature,
+          '=',
+          $.operation_declaration
+        ))),
+        prec(0,field("component", seq(
+          $.sequence,
+          '=',
+          $.component_declaration
+        ))),
       ),
+    ),
+    operation_signature: $ => repeat1(
+      choice(
+        $.keyword,
+        $.variable,
+        $.iterator,
+      )
+    ),
+    iterator: $ => seq(
+      '[',
+      $.variable,
+      optional('*'),
+      ']',
     ),
     component_declaration: $ => seq(
       '{',
       repeat1($._stmt), // nested components are forbidden
       '}',
     ),
+    operation_declaration: $ => choice(
+      seq(
+      $.sequence,
+        ';',
+      ),
+      seq(
+        '{',
+        repeat(
+          $._op_stmt,
+        ),
+        '}',
+      ),
+    ),
     label: $ => /@[a-z_][0-9a-z_]*/,
     trigger: $ => seq(
+      optional('!'),
       $.repeat_quantifier,
       optional($.number),
       $.time_unit,
@@ -111,6 +159,11 @@ module.exports = grammar({
       'left',
       'right',
     ),
+    effect: $ => choice(
+      'randomized',
+      'blurred',
+      'inversed',
+    ),
     color: $ => choice(
       $.color_name,
       $.color_value,
@@ -121,8 +174,11 @@ module.exports = grammar({
       $.position,
       $.vector,
       $.color,
+      $.effect,
       $.direction,
+      // $.string,
     ),
+    // string: $ => '',
     color_value: $ => /#\d{6}/,
     color_name: $ => choice(
       'red',
@@ -137,6 +193,13 @@ module.exports = grammar({
       'white',
       'pink',
       // TODO: add more
+    ),
+
+    comment: $ => token(
+      choice(
+        seq("//", /.*/), 
+        seq("/*", /[^*]*\*+([^/*][^*]*\*+)*/, "/")
+      ),
     ),
   }
 });
