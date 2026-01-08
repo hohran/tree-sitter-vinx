@@ -1,13 +1,42 @@
+// Define variables
 $p1 = (0,0);
+$p2 = (100,100);
+$color = blue;
 
-move [$x] $d by $s = move $x $d by $s;
-move [$x] $ds by $s = { // test
-    $tmp = right;
-    switch $ds into $tmp;
-    /*
-    ae
-    tes t
-    2
-    */
-    move $x $tmp by $s;
+// You can load an external file, if only it existed
+// load "functions.vinx";
+
+// This is the same
+// load "functions";
+
+// Define custom function
+move $position [$direction] by $step = move $position $direction by $step;
+
+// Define what should actually happen
+// You can name this action (but its optionally)
+"draw-first"
+every frame {
+    draw red rectangle from $p1 to $p2;
+}
+
+// Define second action
+// The ! makes this action deactivated
+"draw-second"
+!every frame // notice the missing brackets, since this action only has one event
+    draw $color rectangle from $p2 to $p1; // also notice the swapped positions, 
+                                        // it makes a difference
+
+// Define an action that only triggers every n frames
+// "frame" and "frames" is interchangeable (always)
+every 10 frames {
+    move $p1 right by 1;    // using builtin function
+    move $p2 [down,right] by 1; // using previously defined one
+}
+
+/* block comment, wow */
+
+// at triggers the action only once
+at 30 frames {
+    deactivate "draw-first";
+    activate "draw-second";
 }
