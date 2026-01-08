@@ -27,9 +27,11 @@ module.exports = grammar({
   rules: {
     source_file: $ => repeat($._stmt),
     _stmt: $ => prec(1, choice(
+      $.comment,  // hack for getting com
       $.action,
       $.var_definition,
       $.declaration,
+      $.file_load,
       // $.component_definition,
     )),
     _op_stmt: $ => prec(2,choice(
@@ -39,19 +41,23 @@ module.exports = grammar({
         ';',
       )),
     ),
+    file_load: $ => seq(
+      'load',
+      field("filename", $.string),
+      ';'
+    ),
     action: $ => seq(
-      optional($.label),
+      optional($._label),
       $.trigger,
       $.events,
     ),
     var_definition: $ => seq(
-      $.variable,
+      field("lhs", $.variable),
       '=',
-      $.sequence,
+      field("rhs", $.sequence),
       ';',
     ),
-    declaration: $ => seq(
-      choice(
+    declaration: $ => choice(
         prec(1,field("operation", seq(
           $.operation_signature,
           '=',
@@ -61,7 +67,7 @@ module.exports = grammar({
           $.sequence,
           '=',
           $.component_declaration
-        ))),
+        )),
       ),
     ),
     operation_signature: $ => repeat1(
@@ -73,8 +79,8 @@ module.exports = grammar({
     ),
     iterator: $ => seq(
       '[',
-      $.variable,
-      optional('*'),
+      field("variable", $.variable),
+      optional(field("main", '*')),
       ']',
     ),
     component_declaration: $ => seq(
@@ -95,11 +101,11 @@ module.exports = grammar({
         '}',
       ),
     ),
-    label: $ => /@[a-z_][0-9a-z_]*/,
+    _label: $ => $.string,
     trigger: $ => seq(
-      optional('!'),
+      optional(field("deactivated", '!')),
       $.repeat_quantifier,
-      optional($.number),
+      optional(field("step", $.number)),
       $.time_unit,
     ),
     events: $ => choice(
@@ -120,7 +126,6 @@ module.exports = grammar({
       choice(
         $.keyword,
         $.value,
-        $.label,
       )
     ),
     keyword: $ => /[a-z]+/,
@@ -143,9 +148,9 @@ module.exports = grammar({
     ),
     position: $ => seq(
       '(',
-      $.number,
+      field("x", $.number),
       ',',
-      $.number,
+      field("y", $.number),
       ')',
     ),
     vector: $ => seq(
@@ -176,10 +181,17 @@ module.exports = grammar({
       $.color,
       $.effect,
       $.direction,
-      // $.string,
+      $.string,
     ),
-    // string: $ => '',
-    color_value: $ => /#\d{6}/,
+    string: $ => seq(
+      '"',
+      field("value", repeat(choice(
+        /[^"\\\n]/,
+        /\\./
+      ))),
+      '"'
+    ),
+    color_value: $ => /#[\da-fA-F]{6}/,
     color_name: $ => choice(
       'red',
       'green',
