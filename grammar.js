@@ -16,10 +16,10 @@ module.exports = grammar({
   ],
 
   conflicts: $ => [
-    [$.var_definition,$.value,$.operation_signature],
+    [$.var_definition,$.signature],
     [$.iterator,$.value],
-    [$.operation_signature,$.value],
-    [$.operation_signature,$.sequence],
+    [$.signature,$.value],
+    [$.signature,$.sequence],
   ],
 
   word: $ => $.keyword,
@@ -30,16 +30,14 @@ module.exports = grammar({
       $.comment,  // hack for getting com
       $.action,
       $.var_definition,
-      $.declaration,
+      $.definition,
       $.file_load,
       // $.component_definition,
     )),
     _op_stmt: $ => prec(2,choice(
       $.var_definition,
-      seq(
-        $.sequence,
-        ';',
-      )),
+      $._ended_sequence
+      ),
     ),
     file_load: $ => seq(
       'load',
@@ -57,19 +55,45 @@ module.exports = grammar({
       field("rhs", $.sequence),
       ';',
     ),
-    declaration: $ => choice(
-        prec(1,field("operation", seq(
-          $.operation_signature,
-          '=',
-          $.operation_declaration
-        ))),
-        prec(0,field("component", seq(
-          $.sequence,
-          '=',
-          $.component_declaration
-        )),
-      ),
+    definition: $ => seq(
+      $.signature,
+      '=',
+      $.definition_body
     ),
+    signature: $ => repeat1(
+      choice(
+        $.keyword,
+        $.variable,
+        $.iterator,
+      )
+    ),
+    definition_body: $ => choice(
+      $._definition_stmt,
+      seq(
+        '{',
+        repeat($._definition_stmt),
+        '}'
+      )
+    ),
+    _definition_stmt: $ => choice(
+      $._ended_sequence,
+      $.definition,
+      $.var_definition,
+    ),
+
+    // declaration: $ => choice(
+    //     prec(1,field("operation", seq(
+    //       $.operation_signature,
+    //       '=',
+    //       $.operation_declaration
+    //     ))),
+    //     prec(0,field("component", seq(
+    //       $.sequence,
+    //       '=',
+    //       $.component_declaration
+    //     )),
+    //   ),
+    // ),
     operation_signature: $ => repeat1(
       choice(
         $.keyword,
@@ -89,10 +113,7 @@ module.exports = grammar({
       '}',
     ),
     operation_declaration: $ => choice(
-      seq(
-      $.sequence,
-        ';',
-      ),
+      $._ended_sequence,
       seq(
         '{',
         repeat(
@@ -109,16 +130,10 @@ module.exports = grammar({
       $.time_unit,
     ),
     events: $ => choice(
-      seq(
-      $.sequence,
-        ';',
-      ),
+      $._ended_sequence,
       seq(
         '{',
-        repeat(seq(
-          $.sequence,
-          ';',
-        )),
+        repeat($._ended_sequence),
         '}',
       ),
     ),
@@ -127,6 +142,10 @@ module.exports = grammar({
         $.keyword,
         $.value,
       )
+    ),
+    _ended_sequence: $ => seq(
+      $.sequence,
+      ';'
     ),
     keyword: $ => /[a-z]+/,
     variable: $ => /\$[a-z_][a-z_0-9]*/,

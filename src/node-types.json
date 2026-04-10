@@ -47,7 +47,7 @@
     "fields": {}
   },
   {
-    "type": "component_declaration",
+    "type": "definition",
     "named": true,
     "fields": {},
     "children": {
@@ -55,19 +55,30 @@
       "required": true,
       "types": [
         {
-          "type": "action",
+          "type": "definition_body",
           "named": true
         },
         {
-          "type": "comment",
+          "type": "signature",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "definition_body",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "definition",
           "named": true
         },
         {
-          "type": "declaration",
-          "named": true
-        },
-        {
-          "type": "file_load",
+          "type": "sequence",
           "named": true
         },
         {
@@ -75,48 +86,6 @@
           "named": true
         }
       ]
-    }
-  },
-  {
-    "type": "declaration",
-    "named": true,
-    "fields": {
-      "component": {
-        "multiple": true,
-        "required": false,
-        "types": [
-          {
-            "type": "=",
-            "named": false
-          },
-          {
-            "type": "component_declaration",
-            "named": true
-          },
-          {
-            "type": "sequence",
-            "named": true
-          }
-        ]
-      },
-      "operation": {
-        "multiple": true,
-        "required": false,
-        "types": [
-          {
-            "type": "=",
-            "named": false
-          },
-          {
-            "type": "operation_declaration",
-            "named": true
-          },
-          {
-            "type": "operation_signature",
-            "named": true
-          }
-        ]
-      }
     }
   },
   {
@@ -184,48 +153,6 @@
           }
         ]
       }
-    }
-  },
-  {
-    "type": "operation_declaration",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": false,
-      "types": [
-        {
-          "type": "sequence",
-          "named": true
-        },
-        {
-          "type": "var_definition",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "operation_signature",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "iterator",
-          "named": true
-        },
-        {
-          "type": "keyword",
-          "named": true
-        },
-        {
-          "type": "variable",
-          "named": true
-        }
-      ]
     }
   },
   {
@@ -300,6 +227,29 @@
     }
   },
   {
+    "type": "signature",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "iterator",
+          "named": true
+        },
+        {
+          "type": "keyword",
+          "named": true
+        },
+        {
+          "type": "variable",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "source_file",
     "named": true,
     "root": true,
@@ -317,7 +267,7 @@
           "named": true
         },
         {
-          "type": "declaration",
+          "type": "definition",
           "named": true
         },
         {
